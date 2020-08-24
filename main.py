@@ -6,20 +6,17 @@ import asyncio
 import pproxy
 
 
-def start_tor(socks: int, socks_port: int, control_port: int, tor_http_tunnel_port: int):
+def start_tor(socks: int, socks_port: int, control_port: int):
 
     control_ports = []
     socks_ports = []
-    tor_http_tunnel_ports = []
 
     num_of_socks = range(socks)
     for i in num_of_socks:
         control_ports.append(f"{control_port + i}")
         socks_ports.append(f"{socks_port + i}")
-        tor_http_tunnel_ports.append(f"{tor_http_tunnel_port + i}")
 
     process.launch_tor_with_config(config={
-        'HTTPTunnelPort': tor_http_tunnel_ports,
         'ControlPort': control_ports,
         'SocksPort': socks_ports,
         'DNSPort': '53',
@@ -64,13 +61,11 @@ if __name__ == '__main__':
     haproxy_port: int = getenv("haproxy_port", 5000)
     starting_socks_port: int = getenv("starting_socks_port", 6080)
     starting_control_port: int = getenv("starting_control_port", 7080)
-    tor_http_tunnel_port: int = getenv("tor_http_tunnel_port", 8000)
 
     start_tor(
         socks=int(number_of_socks),
         socks_port=int(starting_socks_port),
-        control_port=int(starting_control_port),
-        tor_http_tunnel_port=int(tor_http_tunnel_port)
+        control_port=int(starting_control_port)
     )
 
     run_pproxy(
